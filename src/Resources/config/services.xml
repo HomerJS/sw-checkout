@@ -5,6 +5,26 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+<!--        Controller -->
+        <service id="Ihor\CheckOut\Storefront\Controller\TestController" public="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <call method="setTwig">
+                <argument type="service" id="twig"/>
+            </call>
+            <argument type="service" id="Shopware\Core\Checkout\Cart\LineItemFactoryRegistry"/>
+            <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
+        </service>
 
+<!--        Collector-->
+        <service id="Ihor\CheckOut\Core\Checkout\Cart\CustomCartCollector">
+            <tag name="shopware.cart.collector" />
+        </service>
+
+<!--        Processor-->
+        <service id="Ihor\CheckOut\Core\Checkout\Cart\CustomCartProcessor">
+            <tag name="shopware.cart.processor" priority="4800" />
+        </service>
     </services>
 </container>
