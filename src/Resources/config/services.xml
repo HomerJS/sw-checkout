@@ -25,6 +25,24 @@
 <!--        Processor-->
         <service id="Ihor\CheckOut\Core\Checkout\Cart\CustomCartProcessor">
             <tag name="shopware.cart.processor" priority="4800" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
+        </service>
+
+<!--        Cart validator-->
+        <service id="Ihor\CheckOut\Core\Checkout\Cart\Validator\PriceValidator">
+            <tag name="shopware.cart.validator"/>
+        </service>
+
+<!--        Change the price-->
+        <service id="Ihor\CheckOut\Decorator\Core\Content\Product\SalesChannel\Price\ProductPriceCalculatorDecorator"
+        decorates="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculator">
+            <argument type="service" id="Ihor\CheckOut\Decorator\Core\Content\Product\SalesChannel\Price\ProductPriceCalculatorDecorator.inner" />
+        </service>
+
+<!--        Update tax-->
+        <service id="Ihor\CheckOut\Core\Checkout\Cart\Tax\CustomTaxProvider">
+            <tag name="shopware.tax.provider" />
         </service>
     </services>
 </container>

@@ -1,0 +1,8 @@
+{
+  "checkout": {
+    "custom-line-item-blocked": "Example error message for the cart"
+  },
+  "error": {
+    "custom-line-item-blocked": "Example error message for the checkout"
+  }
+}

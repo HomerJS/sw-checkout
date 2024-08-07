@@ -2,18 +2,59 @@
 
 namespace Ihor\CheckOut;
 
+use Ihor\CheckOut\Core\Checkout\Cart\Tax\CustomTaxProvider;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\ActivateContext;
 use Shopware\Core\Framework\Plugin\Context\DeactivateContext;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Framework\Plugin\Context\UpdateContext;
+use Shopware\Core\Framework\Uuid\Uuid;
 
 class IhorCheckOut extends Plugin
 {
     public function install(InstallContext $installContext): void
     {
-        // Do stuff such as creating a new payment method
+        //add tax provider
+        $ruleRepo = $this->container->get('rule.repository');
+
+        // create a rule, which will be used to determine the availability of your tax provider
+        // do not rely on specific rules to be always present
+        $rule = $ruleRepo->create([
+            [
+                'name' => 'Cart > 0',
+                'priority' => 0,
+                'conditions' => [
+                    [
+                        'type' => 'cartCartAmount',
+                        'value' => [
+                            'amount' => 0,
+                            'operator' => '>=',
+                        ],
+                    ],
+                ],
+            ],
+        ], $installContext->getContext());
+
+        $criteria = new Criteria();
+        $criteria->addFilter(
+            new EqualsFilter('name', 'Cart > 0')
+        );
+
+        $ruleId = $ruleRepo->searchIds($criteria, $installContext->getContext())->firstId();
+
+        $taxRepo = $this->container->get('tax_provider.repository');
+        $taxRepo->create([
+            [
+                'id' => Uuid::randomHex(),
+                'identifier' => CustomTaxProvider::class,
+                'priority' => 1,
+                'active' => false, // activate this via the `activate` lifecycle method
+                'availabilityRuleId' => $ruleId,
+            ],
+        ], $installContext->getContext());
     }
 
     public function uninstall(UninstallContext $uninstallContext): void
