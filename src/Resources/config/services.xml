@@ -44,5 +44,14 @@
         <service id="Ihor\CheckOut\Core\Checkout\Cart\Tax\CustomTaxProvider">
             <tag name="shopware.tax.provider" />
         </service>
+
+<!--        Document Render-->
+        <service id="Ihor\CheckOut\Core\Checkout\Document\Render\TestDocumentRender">
+            <tag name="document.renderer" />
+            <argument type="service" id="order.repository" />
+            <argument type="service" id="Shopware\Core\Checkout\Document\Service\DocumentConfigLoader" />
+            <argument type="service" id="Shopware\Core\Checkout\Document\Twig\DocumentTemplateRenderer" />
+            <argument type="service" id="Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface" />
+        </service>
     </services>
 </container>
